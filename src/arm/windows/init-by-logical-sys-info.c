@@ -373,6 +373,10 @@ clean_up:
 }
 
 BOOL CALLBACK cpuinfo_arm_windows_deinit(PINIT_ONCE init_once, PVOID parameter, PVOID* context) {
+	(void) init_once;
+	(void) parameter;
+	(void) context;
+
 	HANDLE heap = GetProcessHeap();
 
 	HeapFree(heap, 0, cpuinfo_processors);

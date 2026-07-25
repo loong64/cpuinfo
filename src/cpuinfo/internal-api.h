@@ -34,7 +34,7 @@ extern CPUINFO_INTERNAL uint32_t cpuinfo_packages_count;
 extern CPUINFO_INTERNAL uint32_t cpuinfo_cache_count[cpuinfo_cache_level_max];
 extern CPUINFO_INTERNAL uint32_t cpuinfo_max_cache_size;
 
-#if CPUINFO_ARCH_ARM || CPUINFO_ARCH_ARM64 || CPUINFO_ARCH_RISCV32 || CPUINFO_ARCH_RISCV64
+#if CPUINFO_ARCH_ARM || CPUINFO_ARCH_ARM64 || CPUINFO_ARCH_RISCV32 || CPUINFO_ARCH_RISCV64 || CPUINFO_ARCH_LOONGARCH64
 extern CPUINFO_INTERNAL struct cpuinfo_uarch_info* cpuinfo_uarchs;
 extern CPUINFO_INTERNAL uint32_t cpuinfo_uarchs_count;
 #else
@@ -45,7 +45,7 @@ extern CPUINFO_INTERNAL struct cpuinfo_uarch_info cpuinfo_global_uarch;
 extern CPUINFO_INTERNAL uint32_t cpuinfo_linux_cpu_max;
 extern CPUINFO_INTERNAL const struct cpuinfo_processor** cpuinfo_linux_cpu_to_processor_map;
 extern CPUINFO_INTERNAL const struct cpuinfo_core** cpuinfo_linux_cpu_to_core_map;
-#if CPUINFO_ARCH_ARM || CPUINFO_ARCH_ARM64 || CPUINFO_ARCH_RISCV32 || CPUINFO_ARCH_RISCV64
+#if CPUINFO_ARCH_ARM || CPUINFO_ARCH_ARM64 || CPUINFO_ARCH_RISCV32 || CPUINFO_ARCH_RISCV64 || CPUINFO_ARCH_LOONGARCH64
 extern CPUINFO_INTERNAL const uint32_t* cpuinfo_linux_cpu_to_uarch_index_map;
 #endif
 #endif
@@ -64,6 +64,7 @@ CPUINFO_PRIVATE void cpuinfo_arm_mach_init(void);
 CPUINFO_PRIVATE void cpuinfo_arm_linux_init(void);
 CPUINFO_PRIVATE void cpuinfo_riscv_linux_init(void);
 CPUINFO_PRIVATE void cpuinfo_emscripten_init(void);
+CPUINFO_PRIVATE void cpuinfo_loongarch_linux_init(void);
 
 /* Platform-specific deinitialization functions.
  * Each frees the globals allocated by its corresponding init function. */
@@ -81,6 +82,7 @@ CPUINFO_PRIVATE void cpuinfo_arm_mach_deinit(void);
 CPUINFO_PRIVATE void cpuinfo_arm_linux_deinit(void);
 CPUINFO_PRIVATE void cpuinfo_riscv_linux_deinit(void);
 CPUINFO_PRIVATE void cpuinfo_emscripten_deinit(void);
+CPUINFO_PRIVATE void cpuinfo_loongarch_linux_deinit(void);
 
 CPUINFO_PRIVATE uint32_t cpuinfo_compute_max_cache_size(const struct cpuinfo_processor* processor);
 

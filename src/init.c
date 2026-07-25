@@ -61,6 +61,12 @@ bool CPUINFO_ABI cpuinfo_initialize(void) {
 	}
 	init_guard = true;
 #endif
+#elif CPUINFO_ARCH_LOONGARCH64
+#if defined(__linux__)
+	pthread_once(&init_guard, &cpuinfo_loongarch_linux_init);
+#else
+	cpuinfo_log_error("loongarch operating system is not supported in cpuinfo");
+#endif
 #else
 	cpuinfo_log_error("processor architecture is not supported in cpuinfo");
 #endif
@@ -89,6 +95,10 @@ void CPUINFO_ABI cpuinfo_deinitialize(void) {
 	pthread_once(&deinit_guard, &cpuinfo_arm_mach_deinit);
 #elif defined(_WIN32)
 	InitOnceExecuteOnce(&deinit_guard, &cpuinfo_arm_windows_deinit, NULL, NULL);
+#endif
+#elif CPUINFO_ARCH_LOONGARCH64
+#if defined(__linux__)
+	pthread_once(&deinit_guard, &cpuinfo_loongarch_linux_deinit);
 #endif
 #elif CPUINFO_ARCH_RISCV32 || CPUINFO_ARCH_RISCV64
 #if defined(__linux__)

@@ -64,6 +64,11 @@ RISCV_SRCS = [
     "src/riscv/uarch.c",
 ]
 
+LOONGARCH_SRCS = [
+    "src/loongarch/cache.c",
+    "src/loongarch/uarch.c",
+]
+
 # Platform-specific sources and headers
 LINUX_SRCS = [
     "src/linux/cpulist.c",
@@ -112,6 +117,15 @@ LINUX_RISCV_SRCS = [
     "src/riscv/linux/riscv-hw.c",
 ]
 
+LINUX_LOONGARCH_SRCS = [
+    "src/loongarch/linux/clusters.c",
+    "src/loongarch/linux/cpucfg.c",
+    "src/loongarch/linux/cpuinfo.c",
+    "src/loongarch/linux/hwcap.c",
+    "src/loongarch/linux/init.c",
+    "src/loongarch/linux/loongarch64-isa.c",
+]
+
 ANDROID_ARM_SRCS = [
     "src/arm/android/properties.c",
 ]
@@ -154,6 +168,7 @@ cc_library(
         ":linux_ppc64le": COMMON_SRCS + LINUX_SRCS,
         ":linux_riscv32": COMMON_SRCS + RISCV_SRCS + LINUX_SRCS + LINUX_RISCV_SRCS,
         ":linux_riscv64": COMMON_SRCS + RISCV_SRCS + LINUX_SRCS + LINUX_RISCV_SRCS,
+        ":linux_loongarch64": COMMON_SRCS + LOONGARCH_SRCS + LINUX_SRCS + LINUX_LOONGARCH_SRCS,
         ":linux_s390x": COMMON_SRCS + LINUX_SRCS,
         ":macos_x86_64": COMMON_SRCS + X86_SRCS + MACH_SRCS + MACH_X86_SRCS,
         ":macos_x86_64_legacy": COMMON_SRCS + X86_SRCS + MACH_SRCS + MACH_X86_SRCS,
@@ -219,6 +234,9 @@ cc_library(
         "src/arm/midr.h",
         "src/riscv/api.h",
         "src/riscv/linux/api.h",
+        "src/loongarch/api.h",
+        "src/loongarch/cpucfg.h",
+        "src/loongarch/linux/api.h",
     ],
 )
 
@@ -317,6 +335,16 @@ config_setting(
         "@platforms//os:linux",
         "@platforms//cpu:riscv64",
     ],
+)
+
+config_setting(
+    name = "linux_loongarch64",
+    constraint_values = [
+        "@platforms//os:linux",
+    ],
+    values = {
+        "cpu": "loongarch64",
+    },
 )
 
 config_setting(

@@ -323,6 +323,39 @@ TEST(CLUSTERS_COUNT, within_bounds) {
 	cpuinfo_deinitialize();
 }
 
+#if CPUINFO_ARCH_LOONGARCH64
+TEST(CPUCFG, populated_for_known_uarchs) {
+	ASSERT_TRUE(cpuinfo_initialize());
+
+	for (uint32_t i = 0; i < cpuinfo_get_processors_count(); i++) {
+		const cpuinfo_processor* processor = cpuinfo_get_processor(i);
+		ASSERT_TRUE(processor);
+		ASSERT_TRUE(processor->core);
+		if (processor->core->uarch != cpuinfo_uarch_unknown) {
+			EXPECT_NE(0u, processor->cpucfg_id);
+		}
+	}
+
+	for (uint32_t i = 0; i < cpuinfo_get_clusters_count(); i++) {
+		const cpuinfo_cluster* cluster = cpuinfo_get_cluster(i);
+		ASSERT_TRUE(cluster);
+		if (cluster->uarch != cpuinfo_uarch_unknown) {
+			EXPECT_NE(0u, cluster->cpucfg);
+		}
+	}
+
+	for (uint32_t i = 0; i < cpuinfo_get_uarchs_count(); i++) {
+		const cpuinfo_uarch_info* uarch = cpuinfo_get_uarch(i);
+		ASSERT_TRUE(uarch);
+		if (uarch->uarch != cpuinfo_uarch_unknown) {
+			EXPECT_NE(0u, uarch->cpucfg);
+		}
+	}
+
+	cpuinfo_deinitialize();
+}
+#endif
+
 TEST(CLUSTERS, non_null) {
 	ASSERT_TRUE(cpuinfo_initialize());
 	EXPECT_TRUE(cpuinfo_get_clusters());

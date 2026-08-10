@@ -95,7 +95,7 @@ IF(NOT CMAKE_SYSTEM_PROCESSOR)
       "cpuinfo will compile, but cpuinfo_initialize() will always fail.")
     SET(CPUINFO_SUPPORTED_PLATFORM FALSE)
   ENDIF()
-ELSEIF(NOT CPUINFO_TARGET_PROCESSOR MATCHES "^(i[3-6]86|AMD64|x86(_64)?|armv[5-8].*|aarch64|arm64.*|ARM64.*|riscv(32|64))$")
+ELSEIF(NOT CPUINFO_TARGET_PROCESSOR MATCHES "^(i[3-6]86|AMD64|x86(_64)?|armv[5-8].*|aarch64|arm64.*|ARM64.*|riscv(32|64)|loongarch64)$")
   MESSAGE(WARNING
     "Target processor architecture \"${CPUINFO_TARGET_PROCESSOR}\" is not supported in cpuinfo. "
     "cpuinfo will compile, but cpuinfo_initialize() will always fail.")
@@ -224,6 +224,19 @@ IF(CPUINFO_SUPPORTED_PLATFORM)
         src/riscv/linux/init.c
 	src/riscv/linux/riscv-hw.c
 	src/riscv/linux/riscv-isa.c)
+    ENDIF()
+  ELSEIF(CPUINFO_TARGET_PROCESSOR MATCHES "^(loongarch64)$")
+    LIST(APPEND CPUINFO_SRCS
+      src/loongarch/uarch.c
+      src/loongarch/cache.c)
+    IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+      LIST(APPEND CPUINFO_SRCS
+        src/loongarch/linux/init.c
+        src/loongarch/linux/cpuinfo.c
+        src/loongarch/linux/clusters.c
+        src/loongarch/linux/cpucfg.c
+        src/loongarch/linux/hwcap.c
+        src/loongarch/linux/loongarch64-isa.c)
     ENDIF()
   ENDIF()
 
@@ -814,6 +827,14 @@ IF(CPUINFO_SUPPORTED_PLATFORM AND CPUINFO_BUILD_UNIT_TESTS)
   CPUINFO_TARGET_RUNTIME_LIBRARY(init-test)
   TARGET_LINK_LIBRARIES(init-test PRIVATE cpuinfo gtest gtest_main)
   ADD_TEST(NAME init-test COMMAND init-test)
+
+  IF(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CPUINFO_TARGET_PROCESSOR STREQUAL "loongarch64")
+    ADD_EXECUTABLE(loongarch-cpuinfo-test test/loongarch-cpuinfo.c)
+    CPUINFO_TARGET_ENABLE_C99(loongarch-cpuinfo-test)
+    CPUINFO_TARGET_RUNTIME_LIBRARY(loongarch-cpuinfo-test)
+    TARGET_LINK_LIBRARIES(loongarch-cpuinfo-test PRIVATE cpuinfo_internals)
+    ADD_TEST(NAME loongarch-cpuinfo-test COMMAND loongarch-cpuinfo-test)
+  ENDIF()
 
   IF(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Android")
     ADD_EXECUTABLE(get-current-test test/get-current.cc)
